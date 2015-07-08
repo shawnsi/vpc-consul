@@ -20,20 +20,19 @@
       - dnsmasq
 
   - name: Download Consul
-    get_url:
-      url: https://dl.bintray.com/mitchellh/consul/0.3.1_linux_amd64.zip
-      dest: /tmp/consul.zip
+    local_action: get_url url=https://dl.bintray.com/mitchellh/consul/0.3.1_linux_amd64.zip dest=/tmp/consul.zip
 
   - name: Download Consul UI
-    get_url:
-      url: https://dl.bintray.com/mitchellh/consul/0.3.1_web_ui.zip
-      dest: /tmp/consul-ui.zip
+    local_action: get_url url=https://dl.bintray.com/mitchellh/consul/0.3.1_web_ui.zip dest=/tmp/consul-ui.zip
 
   - name: Extract Consul
-    command: unzip -n -d /bin /tmp/consul.zip creates=/bin/consul
+    unarchive: copy=true src=/tmp/consul.zip dest=/bin creates=/bin/consul
+
+  - name: Create Consul UI Directory
+    file: path=/var/consul/ui state=directory
 
   - name: Extract Consul UI
-    command: unzip -n -d /var/consul/ui /tmp/consul-ui.zip creates={{ consul_ui_dir }}
+    unarchive: copy=true src=/tmp/consul-ui.zip dest=/var/consul/ui creates={{ consul_ui_dir }}
 
   - name: Create Consul config folder
     file: path={{ consul_config_dir }} state=directory
